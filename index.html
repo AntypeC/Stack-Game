@@ -4,11 +4,27 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.148.0/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three-js-csg/72.0.0/index.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.148.0/three.min.js"></script> -->
     <title>Stack Game</title>
 </head>
-<body>
+<body style="margin: 0">
+    <div class="text" id="score">Score: </div>
+    <div class="text" id="how-to">Press space to stack!</h2>
     <script type="module" src="./js/script.js"></script>
 </body>
+<style>
+    .text {
+        position: absolute;
+        z-index: 1;
+        color: white;
+        left: 50%;
+        margin: -50px 0 0 -50px;
+    }
+    #score {
+        top: 40%;
+    }
+    #how-to {
+        top: 45%
+    }
+</style>
 </html>

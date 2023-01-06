@@ -1,3 +1,5 @@
+import * as THREE from './three.module.js'
+
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth /window.innerHeight, 0.1, 1000);
 
@@ -25,18 +27,20 @@ var mat = new THREE.LineBasicMaterial( { color: 0xffffff} );
 var wireframe = new THREE.LineSegments( edge, mat );
 mesh.add( wireframe );
 
-var stackCreator = undefined
+var stackAdder = undefined
+var count = 0
 
-function showStackCreator() {
+function AddStack() {
     const geo = new THREE.BoxGeometry(1, 0.3, 1);
-    stackCreator = new THREE.Mesh(geo, material);
-    const e = new THREE.EdgesGeometry(stackCreator.geometry);
+    stackAdder = new THREE.Mesh(geo, material);
+    const e = new THREE.EdgesGeometry(stackAdder.geometry);
     const w = new THREE.LineSegments(e, mat);
-    stackCreator.add(w);
-    stackCreator.position.y = 1.65;
-    stackCreator.position.z = -1.5;
+    stackAdder.add(w);
+    stackAdder.position.y = count+1.65;
+    stackAdder.position.z = -1.5;
 
-    scene.add(stackCreator);
+    scene.add(stackAdder);
+    count += 0.3
 }
 
 // var geometry1 = new THREE.BoxGeometry(1, 1, 1);
@@ -55,15 +59,15 @@ var goForward = true
 
 function animate() {
     let speed = 0.02;
-    if (stackCreator != undefined) {
+    if (stackAdder != undefined) {
         if (goForward == true) {
-            stackCreator.position.z += speed;
-            if (stackCreator.position.z >= 1.5) {
+            stackAdder.position.z += speed;
+            if (stackAdder.position.z >= 1.5) {
                 goForward = false
             }
         } else {
-            stackCreator.position.z -= speed;
-            if (stackCreator.position.z <= -1.5) {
+            stackAdder.position.z -= speed;
+            if (stackAdder.position.z <= -1.5) {
                 goForward = true
             }
         }
@@ -74,7 +78,11 @@ function animate() {
 
 document.addEventListener('keydown', (event) => {
     if (event.key == 'Spacebar' || event.key == ' ') {
-        showStackCreator()
+        AddStack()
+        if (document.getElementsByClassName('text') != null) {
+            document.getElementById('score').remove();
+            document.getElementById('how-to').remove();
+        }
     }
 })
 
