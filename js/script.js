@@ -96,6 +96,9 @@ function animate() {
     renderer.render( scene, camera );
 }
 
+var width = 0.5;
+var center = 0;
+
 document.addEventListener('keydown', (event) => {
     if (event.key == 'Spacebar' || event.key == ' ') {
         camera.position.y += 0.08
