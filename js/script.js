@@ -29,6 +29,7 @@ mesh.add( wireframe );
 
 var scanner = undefined
 var count = 0
+document.getElementById('score').innerHTML = 'Score: '+count/0.3
 const scanRange = 1.5
 
 function ToVertices(geometry, zDelta) {
@@ -97,13 +98,12 @@ function animate() {
 
 document.addEventListener('keydown', (event) => {
     if (event.key == 'Spacebar' || event.key == ' ') {
-        camera.position.y += 0.05
+        camera.position.y += 0.08
         let intersection = 0;
         let displacement = 0;
   
         if (count == 0) {
-            document.getElementById('score').remove();
-            document.getElementById('how-to').remove();
+            document.getElementsByClassName('info')[0].remove();
         } else {
             scene.remove(scanner)
             console.log(scanner.position.z)

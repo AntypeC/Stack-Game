@@ -8,23 +8,20 @@
     <title>Stack Game</title>
 </head>
 <body style="margin: 0">
-    <div class="text" id="score">Score: </div>
-    <div class="text" id="how-to">Press space to stack!</h2>
+    <div class="info">
+        <h1 id="score"></h1>
+        <p>Press space to stack!</p>
+    </div>
     <script type="module" src="./js/script.js"></script>
 </body>
 <style>
-    .text {
+    .info {
         position: absolute;
+        top: 40%;
         z-index: 1;
         color: white;
         left: 50%;
         margin: -50px 0 0 -50px;
-    }
-    #score {
-        top: 40%;
-    }
-    #how-to {
-        top: 45%
     }
 </style>
 </html>
