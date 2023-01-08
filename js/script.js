@@ -76,7 +76,7 @@ function addStack(width, center) {
         stack.add(new THREE.LineSegments(new THREE.EdgesGeometry(stack.geometry)));
         stack.position.y = (count*0.3 -0.3)+1.65;
         stack.position.z = center;
-        rectangle2 = { x1: stack.position.z+width, y1: 0.5, x2: stack.position.z-width, y2: -0.5 };
+        rectangle2 = { x1: stack.position.z+width/2, y1: 0.5, x2: stack.position.z-width/2, y2: -0.5 };
         scene.add(stack)
     }
 
