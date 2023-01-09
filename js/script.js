@@ -73,11 +73,10 @@ function addStack(widthX, widthY, positionX, positionY) {
     const edge = new THREE.EdgesGeometry(scanner.geometry);
     const wire = new THREE.LineSegments(edge, mat);
     scanner.add(wire);
+    scanner.position.y = (count*0.3)+1.65;
     if (count % 2 == 0) {
-        scanner.position.y = (count*0.3)+1.65;
         scanner.position.z = -scanRange;
     } else {
-        scanner.position.y = (count*0.3)+1.65;
         scanner.position.x = -scanRange;
     }
 
