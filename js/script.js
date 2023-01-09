@@ -82,16 +82,6 @@ function addStack(widthX, widthY, positionX, positionY) {
     }
 
     if (count!=0) {
-        console.log('widthX')
-        console.log(widthX)
-        console.log('widthY')
-        console.log(widthY)
-        console.log('positionX')
-        console.log(positionX)
-        console.log('positionY')
-        console.log(positionY)
-        console.log('+++++++++')
-
         const geometry = new THREE.BoxGeometry(widthY, 0.3, widthX)
         const stack = new THREE.Mesh(geometry, material);
         stack.add(new THREE.LineSegments(new THREE.EdgesGeometry(stack.geometry)));
@@ -110,7 +100,8 @@ scene.add(base);
 
 var scan = true
 var lateral = false
-var cameraHeight = 2
+var viewHeight = 2
+var viewIceberg = false
 var baseHeight = 0
 var run = false
 
@@ -143,13 +134,19 @@ function animate() {
             }
         }
     }
-    if (camera.position.y < cameraHeight) {
-        camera.position.y += 0.01
-    }
     if (base.position.y <= baseHeight-0.03) {
         base.position.y += 0.03
     } else {
         run = true
+    }
+    if (camera.position.y < viewHeight) {
+        camera.position.y += 0.01
+    }
+    if (viewIceberg==true) {
+        if (camera.position.x < camera.position.y) {
+            camera.position.x += 0.01
+            camera.position.z += 0.01
+        }
     }
     requestAnimationFrame( animate );
     renderer.render( scene, camera );
@@ -175,7 +172,7 @@ document.addEventListener('keydown', (event) => {
     restart.style.display = 'none'
     if ((event.key == 'Spacebar' && run == true) || (event.key == ' ' && run == true)) {
         if (count == 0) {
-            cameraHeight += 0.3
+            viewHeight += 0.3
             elem.style.display = 'none'
             addStack()
         } else {
@@ -192,9 +189,10 @@ document.addEventListener('keydown', (event) => {
                 redbg.style.display = 'block';
                 deathmsg.style.display = 'block';
                 restart.style.display = 'block';
+                viewIceberg = true
                 reset()
             } else {
-                cameraHeight += 0.3
+                viewHeight += 0.3
                 if (count % 2==0) {
                     addStack(widthX, widthY, positionX, positionY)
                     lateral = false 
