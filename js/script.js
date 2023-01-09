@@ -88,7 +88,6 @@ function addStack(widthX, widthY, positionX, positionY) {
         stack.position.z = positionX;
         stack.position.x = positionY;
         rectangle2 = { x1: stack.position.z+widthX/2, y1: stack.position.x+widthY/2, x2: stack.position.z-widthX/2, y2: stack.position.x-widthY/2 };
-        console.log(Math.abs(intersect.y2-intersect.y1))
         scene.add(stack)
     }
 
