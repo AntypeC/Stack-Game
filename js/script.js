@@ -89,7 +89,7 @@ var goForward = true
 var moveCamera = 2
 
 function animate() {
-    let speed = 0.008;
+    let speed = 0.02;
     if (scanner != undefined) {
         if (goForward == true) {
             scanner.position.z += speed;
@@ -112,18 +112,21 @@ function animate() {
 
 animate();
 
-var elem = document.getElementById('info');
-var restart = document.getElementById('restart');
+var elem = document.getElementById('instruction1');
+var restart = document.getElementById('instruction2');
 
-restart.onclick = function reset() {
-    document.getElementById('red').style.display = 'none';
-    document.getElementById('death-msg').style.display = 'none';
-    document.getElementById('restart').style.display = 'none'
-    document.getElementById('message').style.display = 'block'
+function reset() {
+    document.addEventListener('keydown', (e) => {
+        if (e.key == 'Spacebar' || e.key == ' ') {
+            console.log('Refreshing');
+            window.location.reload()
+        }
+    })
 }
 
 document.addEventListener('keydown', (event) => {
     elem.innerHTML = 'Press space to stack!'
+    restart.style.display = 'none'
     document.getElementById('score').innerHTML = 'Score: '+count
     run: if (event.key == 'Spacebar' || event.key == ' ') {
         if (count == 0) {
@@ -142,7 +145,7 @@ document.addEventListener('keydown', (event) => {
                 redbg.style.display = 'block';
                 deathmsg.style.display = 'block';
                 restart.style.display = 'block';
-                break run;
+                reset()
             } else {
                 moveCamera += 0.3
                 console.log('coords: ')
