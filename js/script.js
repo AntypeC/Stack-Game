@@ -7,29 +7,31 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-camera.position.add(new THREE.Vector3(2, 2, 2))
+camera.position.add(new THREE.Vector3(3, 3, 3))
 camera.rotation.y = Math.PI/4;
 
 const baseGeometry = new THREE.BoxGeometry(1, 3, 1)
-// mesh
+
 var material = new THREE.MeshPhongMaterial( {
     color: 0xff0000,
     polygonOffset: true,
     polygonOffsetFactor: 1, // positive value pushes polygon further away
     polygonOffsetUnits: 1
 } );
-var mesh = new THREE.Mesh( baseGeometry, material );
-scene.add( mesh )
+var base = new THREE.Mesh( baseGeometry, material );
+scene.add( base )
 
 // wireframe
-var baseEdge = new THREE.EdgesGeometry( mesh.geometry ); // or WireframeGeometry
+var baseEdge = new THREE.EdgesGeometry( base.geometry ); // or WireframeGeometry
 var mat = new THREE.LineBasicMaterial( { color: 0xffffff} );
 var wireframe = new THREE.LineSegments( baseEdge, mat );
-mesh.add( wireframe );
+base.add( wireframe );
+
+base.position.y = -2.5;
 
 var scanner = undefined
 var count = 0
-const scanRange = 1.5
+const scanRange = 3
 
 /**
  * Returns intersecting part of two rectangles
@@ -59,52 +61,95 @@ const getIntersectingRectangle = (r1, r2) => {
 
 var rectangle1 = { x1: 0.5, y1: 0.5, x2: -0.5, y2: -0.5 }
 var rectangle2 = { x1: 0.5, y1: 0.5, x2: -0.5, y2: -0.5 }
+var widthX = 0
+var widthY = 0
+var positionX = 0
+var positionY = 0
 var intersect = null;
 
-function addStack(width, center) {
+function addStack(widthX, widthY, positionX, positionY) {
     const defaultGeometry = new THREE.BoxGeometry(1, 0.3, 1);
     scanner = new THREE.Mesh(defaultGeometry, material);
     const edge = new THREE.EdgesGeometry(scanner.geometry);
     const wire = new THREE.LineSegments(edge, mat);
     scanner.add(wire);
-    scanner.position.y = (count*0.3)+1.65;
-    scanner.position.z = -scanRange;
+    if (count % 2 == 0) {
+        scanner.position.y = (count*0.3)+1.65;
+        scanner.position.z = -scanRange;
+    } else {
+        scanner.position.y = (count*0.3)+1.65;
+        scanner.position.x = -scanRange;
+    }
 
     if (count!=0) {
-        const geometry = new THREE.BoxGeometry(1, 0.3, width)
+        console.log('widthX')
+        console.log(widthX)
+        console.log('widthY')
+        console.log(widthY)
+        console.log('positionX')
+        console.log(positionX)
+        console.log('positionY')
+        console.log(positionY)
+        console.log('+++++++++')
+
+        const geometry = new THREE.BoxGeometry(widthY, 0.3, widthX)
         const stack = new THREE.Mesh(geometry, material);
         stack.add(new THREE.LineSegments(new THREE.EdgesGeometry(stack.geometry)));
         stack.position.y = (count*0.3 -0.3)+1.65;
-        stack.position.z = center;
-        rectangle2 = { x1: stack.position.z+width/2, y1: 0.5, x2: stack.position.z-width/2, y2: -0.5 };
+        stack.position.z = positionX;
+        stack.position.x = positionY;
+        rectangle2 = { x1: stack.position.z+widthX/2, y1: stack.position.x+widthY/2, x2: stack.position.z-widthX/2, y2: stack.position.x-widthY/2 };
+        console.log(Math.abs(intersect.y2-intersect.y1))
         scene.add(stack)
     }
 
     scene.add(scanner);
 }
 
-scene.add(mesh);
+scene.add(base);
 
-var goForward = true
-var moveCamera = 2
+var scan = true
+var lateral = false
+var cameraHeight = 2
+var baseHeight = 0
+var run = false
 
 function animate() {
-    let speed = 0.02;
+    let speed = 0.03+(0.001*count);
     if (scanner != undefined) {
-        if (goForward == true) {
-            scanner.position.z += speed;
-            if (scanner.position.z >= scanRange) {
-                goForward = false
+        if (lateral == false) {
+            if (scan == true) {
+                scanner.position.z += speed;
+                if (scanner.position.z >= scanRange) {
+                    scan = false
+                }
+            } else {
+                scanner.position.z -= speed;
+                if (scanner.position.z <= -scanRange) {
+                    scan = true
+                }
             }
         } else {
-            scanner.position.z -= speed;
-            if (scanner.position.z <= -scanRange) {
-                goForward = true
+            if (scan == true) {
+                scanner.position.x += speed;
+                if (scanner.position.x >= scanRange) {
+                    scan = false
+                }
+            } else {
+                scanner.position.x -= speed;
+                if (scanner.position.x <= -scanRange) {
+                    scan = true
+                }
             }
         }
     }
-    if (camera.position.y < moveCamera) {
+    if (camera.position.y < cameraHeight) {
         camera.position.y += 0.01
+    }
+    if (base.position.y <= baseHeight-0.03) {
+        base.position.y += 0.03
+    } else {
+        run = true
     }
     requestAnimationFrame( animate );
     renderer.render( scene, camera );
@@ -125,19 +170,21 @@ function reset() {
 }
 
 document.addEventListener('keydown', (event) => {
+    document.getElementById('score').innerHTML = 'Score: '+count
     elem.innerHTML = 'Press space to stack!'
     restart.style.display = 'none'
-    document.getElementById('score').innerHTML = 'Score: '+count
-    run: if (event.key == 'Spacebar' || event.key == ' ') {
+    if ((event.key == 'Spacebar' && run == true) || (event.key == ' ' && run == true)) {
         if (count == 0) {
-            moveCamera += 0.3
+            cameraHeight += 0.3
             elem.style.display = 'none'
             addStack()
         } else {
-            rectangle1 = { x1: scanner.position.z+0.5, y1: 0.5, x2: scanner.position.z-0.5, y2: -0.5 };
+            rectangle1 = { x1: scanner.position.z+0.5, y1: scanner.position.x+0.5, x2: scanner.position.z-0.5, y2: scanner.position.x-0.5 };
             intersect = getIntersectingRectangle(rectangle1, rectangle2)
-            let width = Math.abs(intersect.x2-intersect.x1)
-            let position = (intersect.x1+intersect.x2)/2
+            widthX = Math.abs(intersect.x2-intersect.x1)
+            widthY = Math.abs(intersect.y2-intersect.y1)
+            positionX = (intersect.x1+intersect.x2)/2
+            positionY = (intersect.y1+intersect.y2)/2
             scene.remove(scanner)
             if (intersect == false) {
                 var redbg = document.getElementById('red-tint');
@@ -147,13 +194,16 @@ document.addEventListener('keydown', (event) => {
                 restart.style.display = 'block';
                 reset()
             } else {
-                moveCamera += 0.3
-                console.log('coords: ')
-                console.log(intersect)
-                addStack(width, position) 
+                cameraHeight += 0.3
+                if (count % 2==0) {
+                    addStack(widthX, widthY, positionX, positionY)
+                    lateral = false 
+                } else {
+                    addStack(widthX, widthY, positionX, positionY) 
+                    lateral = true
+                }
             }
         }
         count += 1
     }
 })
-
