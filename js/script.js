@@ -68,7 +68,7 @@ var positionY = 0
 var intersect = null;
 
 function addStack(widthX, widthY, positionX, positionY) {
-    const defaultGeometry = new THREE.BoxGeometry(1, 0.3, 1);
+    const defaultGeometry = new THREE.BoxGeometry(widthY, 0.3, widthX);
     scanner = new THREE.Mesh(defaultGeometry, material);
     const edge = new THREE.EdgesGeometry(scanner.geometry);
     const wire = new THREE.LineSegments(edge, mat);
@@ -144,10 +144,10 @@ function animate() {
     }
     if (viewIceberg==true) {
         if (camera.position.x < camera.position.y) {
-            camera.position.x += 0.01
-            camera.position.z += 0.01
+            camera.position.x += 0.02
+            camera.position.z += 0.02
         }
-    }
+    } 
     requestAnimationFrame( animate );
     renderer.render( scene, camera );
 }
@@ -160,7 +160,6 @@ var restart = document.getElementById('instruction2');
 function reset() {
     document.addEventListener('keydown', (e) => {
         if (e.key == 'Spacebar' || e.key == ' ') {
-            console.log('Refreshing');
             window.location.reload()
         }
     })
@@ -191,6 +190,7 @@ document.addEventListener('keydown', (event) => {
                 restart.style.display = 'block';
                 viewIceberg = true
                 reset()
+                
             } else {
                 viewHeight += 0.3
                 if (count % 2==0) {
